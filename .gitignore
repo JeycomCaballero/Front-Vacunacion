@@ -1,0 +1,24 @@
+# --- Archivos de compilación de Java / Maven ---
+target/
+*.class
+*.jar
+*.war
+
+# --- Carpetas pesadas de dependencias (si usas Node/NPM) ---
+node_modules/
+
+# --- Configuraciones locales del IDE (NetBeans, Eclipse, VS Code) ---
+.netbeans/
+nbproject/private/
+build/
+.nb-mutants/
+.vscode/
+.idea/
+*.iml
+
+# --- Archivos del Sistema Operativo ---
+.DS_Store
+Thumbs.db
+
+# --- Archivos de configuración local o credenciales ---
+.env
