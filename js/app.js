@@ -1,15 +1,11 @@
-const API_URL = "http://localhost:8080/api"; // Ajusta al puerto de tu backend si es necesario
+const API_URL = "http://localhost:8080/api"; 
 
-// ==========================================
-// 1. SEGURIDAD GLOBAL Y DEPURACIÓN
-// ==========================================
 
-// Función para obtener el token siempre actualizado de localStorage
+
 function getToken() {
     return localStorage.getItem("jwt_token");
 }
 
-// 🛠️ NUEVO: Función para decodificar el token y ver qué tiene por dentro
 function parseJwt(token) {
     try {
         const base64Url = token.split('.')[1];
@@ -23,7 +19,6 @@ function parseJwt(token) {
     }
 }
 
-// 🛠️ NUEVO: Función para auditar el tiempo del token vs tu PC
 function auditarToken() {
     const token = getToken();
     if (!token) {
@@ -37,7 +32,6 @@ function auditarToken() {
         return;
     }
 
-    // Multiplicamos por 1000 porque JWT usa segundos y JS usa milisegundos
     const fechaCreacion = new Date(payload.iat * 1000);
     const fechaExpiracion = new Date(payload.exp * 1000);
     const horaActual = new Date();
@@ -58,12 +52,10 @@ function auditarToken() {
     console.log("==============================================");
 }
 
-// Si el HTML tiene data-auth="true" y no hay token, lo echamos al login
 if (document.body.getAttribute("data-auth") === "true" && !getToken()) {
     window.location.href = "/static/login.html";
 }
 
-// Configuración dinámica para fetch con Token
 function getAuthHeaders() {
     return {
         "Content-Type": "application/json",
@@ -71,7 +63,6 @@ function getAuthHeaders() {
     };
 }
 
-// Cerrar sesión global
 const btnLogout = document.getElementById("btnLogout");
 if (btnLogout) {
     btnLogout.addEventListener("click", () => {
@@ -80,12 +71,9 @@ if (btnLogout) {
     });
 }
 
-// ==========================================
-// 2. LÓGICA POR PÁGINA (Ruteo simple)
-// ==========================================
+
 const currentPath = window.location.pathname;
 
-// --- LOGIN ---
 if (currentPath.includes("login.html") || currentPath === "/static/login" || currentPath === "/static/") {
     const loginForm = document.getElementById("loginForm");
     if (loginForm) {
@@ -119,10 +107,8 @@ if (currentPath.includes("login.html") || currentPath === "/static/login" || cur
     }
 }
 
-// --- MÓDULO: DONANTES Y FIRMAS INTEGRADO ---
 if (currentPath.includes("donantes.html")) {
 
-    // --- 1. LÓGICA DE LA TABLA ---
     async function cargarDonantes() {
         try {
             const res = await fetch(`${API_URL}/donantes?page=0&size=50`, { headers: getAuthHeaders() });
@@ -151,7 +137,6 @@ if (currentPath.includes("donantes.html")) {
     }
     cargarDonantes();
 
-    // --- 2. LÓGICA DEL CANVAS DE FIRMA ---
     const btnDibujar = document.getElementById("btnFirmaDibujar");
     const btnSubir = document.getElementById("btnFirmaSubir");
     const wrapperCanvas = document.getElementById("wrapperCanvas");
@@ -191,7 +176,6 @@ if (currentPath.includes("donantes.html")) {
         return new Promise((resolve) => canvas.toBlob((blob) => resolve(new File([blob], filename, { type: "image/png" })), "image/png"));
     }
 
-    // --- 3. DOBLE GUARDADO: DONANTE + FIRMA ---
     const donanteForm = document.getElementById("donanteForm");
     if (donanteForm) {
         donanteForm.addEventListener("submit", async (e) => {
@@ -202,7 +186,6 @@ if (currentPath.includes("donantes.html")) {
 
             auditarToken();
 
-            // PASO A: Preparar datos del donante
             const payloadDonante = {
                 nombre: document.getElementById("nombre").value,
                 apellido: document.getElementById("apellido").value,
@@ -216,7 +199,6 @@ if (currentPath.includes("donantes.html")) {
             };
 
             try {
-                // PASO B: Guardar Donante en la API
                 const resDonante = await fetch(`${API_URL}/donantes`, {
                     method: "POST",
                     headers: getAuthHeaders(),
@@ -229,9 +211,8 @@ if (currentPath.includes("donantes.html")) {
                 }
 
                 const donanteGuardado = await resDonante.json();
-                console.log("Respuesta del backend (Donante):", donanteGuardado); // <-- Para ver qué llega realmente
+                console.log("Respuesta del backend (Donante):", donanteGuardado); 
 
-                // Validamos múltiples nombres posibles del ID por si en tu Java se llama diferente
                 const nuevoDonanteId = donanteGuardado.id || donanteGuardado.idDonante || donanteGuardado.codigo;
 
                 if (!nuevoDonanteId) {
@@ -240,7 +221,6 @@ if (currentPath.includes("donantes.html")) {
 
                 msgEl.textContent = "Donante guardado (ID: " + nuevoDonanteId + "). Registrando firma...";
 
-                // PASO C: Preparar archivo de firma
                 const formData = new FormData();
                 formData.append("donanteId", nuevoDonanteId);
                 formData.append("acepta", true);
@@ -281,7 +261,6 @@ if (currentPath.includes("donantes.html")) {
         });
     }
 
-    // --- 4. REGISTRO DE DONACIÓN (Suma al inventario automáticamente) ---
     const donacionForm = document.getElementById("donacionForm");
     if (donacionForm) {
         donacionForm.addEventListener("submit", async (e) => {
@@ -319,7 +298,6 @@ if (currentPath.includes("donantes.html")) {
     }
 }
 
-// --- MÓDULO: INVENTARIO ---
 if (currentPath.includes("inventario.html")) {
     async function cargarInventario() {
         const grid = document.getElementById("gridInventario");
@@ -358,7 +336,6 @@ if (currentPath.includes("inventario.html")) {
     cargarInventario();
 }
 
-// --- MÓDULO: CONSENTIMIENTO ---
 if (currentPath.includes("consentimiento.html")) {
     const consentimientoForm = document.getElementById("consentimientoForm");
 
@@ -407,7 +384,6 @@ if (currentPath.includes("consentimiento.html")) {
             const msgEl = document.getElementById("consentMsg");
             msgEl.textContent = "Procesando...";
 
-            // 🛠️ EJECUTAR LA AUDITORÍA ANTES DE ENVIAR
             auditarToken();
 
             const formData = new FormData();
@@ -452,15 +428,11 @@ if (currentPath.includes("consentimiento.html")) {
     }
 }
 
-// ==========================================
-// --- MÓDULO: DONACIONES (EXTRACCIONES) ---
-// ==========================================
+
 if (currentPath.includes("donaciones.html")) {
 
-    // Variable temporal para guardar el ID del donante verificado
     let donanteSeleccionadoId = null;
 
-    // 1. Cargar el historial en la tabla (Se mantiene igual)
     async function cargarHistorial() {
         try {
             const res = await fetch(`${API_URL}/donaciones`, { headers: getAuthHeaders() });
@@ -491,7 +463,6 @@ if (currentPath.includes("donaciones.html")) {
     }
     cargarHistorial();
 
-    // 2. BUSCADOR EN TIEMPO REAL POR DOCUMENTO
     const btnBuscar = document.getElementById("btnBuscarDonante");
     const inputDocumento = document.getElementById("donacionDocumento");
     const txtConfirmacion = document.getElementById("donanteConfirmacion");
@@ -507,21 +478,19 @@ if (currentPath.includes("donaciones.html")) {
         btnGuardar.disabled = true;
 
         try {
-            // Consumimos tu endpoint del back que busca por documento
             const res = await fetch(`${API_URL}/donantes/documento/${documento}`, {
                 headers: getAuthHeaders()
             });
 
             if (res.ok) {
                 const donante = await res.json();
-                donanteSeleccionadoId = donante.id; // Guardamos el ID internamente
+                donanteSeleccionadoId = donante.id;
 
-                // Mostramos el nombre completo y el tipo de sangre para confirmación médica
                 const sangreVisual = (donante.tipoSangre || "").replace('_', ' ');
                 txtConfirmacion.innerHTML = `<i class="fa-solid fa-circle-check"></i> Donante: <strong>${donante.nombreCompleto || (donante.nombre + ' ' + donante.apellido)}</strong> (${sangreVisual})`;
                 txtConfirmacion.style.color = "green";
 
-                btnGuardar.disabled = false; // Habilitamos el botón de guardar
+                btnGuardar.disabled = false; 
             } else {
                 txtConfirmacion.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Donante no encontrado. Regístralo primero.`;
                 txtConfirmacion.style.color = "red";
@@ -533,10 +502,8 @@ if (currentPath.includes("donaciones.html")) {
         }
     }
 
-    // Buscar al presionar el botón de la lupa
     btnBuscar.addEventListener("click", buscarDonantePorDocumento);
 
-    // Buscar también de forma automática si el usuario presiona "Enter" en el input
     inputDocumento.addEventListener("keypress", (e) => {
         if (e.key === "Enter") {
             e.preventDefault();
@@ -545,13 +512,11 @@ if (currentPath.includes("donaciones.html")) {
     });
 
 
-    // 3. Formulario para guardar la donación usando el ID capturado
     const donacionForm = document.getElementById("donacionForm");
     if (donacionForm) {
         donacionForm.addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            // Doble validación de seguridad
             if (!donanteSeleccionadoId) {
                 alert("Por favor, busca y valida el documento del donante primero.");
                 return;
@@ -564,7 +529,7 @@ if (currentPath.includes("donaciones.html")) {
             auditarToken();
 
             const payloadDonacion = {
-                donanteId: donanteSeleccionadoId, // Le enviamos el ID correcto al backend
+                donanteId: donanteSeleccionadoId, 
                 cantidadML: parseFloat(document.getElementById("donacionCantidad").value),
                 observaciones: document.getElementById("donacionObs").value
             };
@@ -580,13 +545,12 @@ if (currentPath.includes("donaciones.html")) {
                     msgEl.style.color = "green";
                     msgEl.textContent = "¡Extracción guardada con éxito! Inventario actualizado.";
 
-                    // Resetear formulario y variables
                     donacionForm.reset();
                     txtConfirmacion.textContent = "";
                     donanteSeleccionadoId = null;
                     btnGuardar.disabled = true;
 
-                    cargarHistorial(); // Refrescar la tabla
+                    cargarHistorial(); 
                 } else {
                     const err = await response.json();
                     msgEl.style.color = "red";
@@ -599,7 +563,6 @@ if (currentPath.includes("donaciones.html")) {
         });
     }
 
-    // 4. Descargar el Historial en PDF (Se mantiene igual)
     const btnExportarPDF = document.getElementById("btnExportarPDF");
     if (btnExportarPDF) {
         btnExportarPDF.addEventListener("click", async () => {
