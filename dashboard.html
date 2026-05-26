@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - MediSign</title>
+    <link rel="stylesheet" href="/static/css/estilos.css">
+    <link rel="stylesheet" href="/static/css/principal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dashboard-layout" data-auth="true">
+
+<aside class="sidebar">
+    <div class="sidebar-header"><i class="fa-solid fa-file-signature"></i> MediSign</div>
+    <nav class="nav-menu">
+        <a href="/static/dashboard.html" class="menu-item active"><i class="fa-solid fa-chart-pie"></i> Inicio</a>
+        <a href="/static/sistema/donantes.html" class="menu-item"><i class="fa-solid fa-users"></i> Donantes</a>
+        <a href="/static/sistema/donaciones.html" class="menu-item"><i class="fa-solid fa-syringe"></i> Donaciones</a>
+        <a href="/static/sistema/inventario.html" class="menu-item"><i class="fa-solid fa-droplet"></i> Inventario</a>
+    </nav>
+    <button id="btnLogout" class="logout-btn"><i class="fa-solid fa-power-off"></i> Cerrar Sesión</button>
+</aside>
+
+<main class="main-content">
+    <h2 class="page-title">Bienvenido al Panel</h2>
+    <p class="page-subtitle">Selecciona una opción del menú lateral para gestionar el Banco de Sangre.</p>
+    <div class="form-panel">
+        <h3>Centro de Ayuda Rápida</h3>
+        <p style="margin-top: 10px; color: var(--text-muted);">Usa el módulo <b>Donantes</b> para registrar pacientes nuevos. Usa <b>Consentimientos</b> para capturar sus firmas obligatorias antes de cualquier extracción.</p>
+    </div>
+</main>
+<script src="/static/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Donaciones - MediSign</title>
+    <link rel="stylesheet" href="/static/css/estilos.css">
+    <link rel="stylesheet" href="/static/css/principal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dashboard-layout" data-auth="true">
+
+<aside class="sidebar">
+    <div class="sidebar-header"><i class="fa-solid fa-file-signature"></i> MediSign</div>
+    <nav class="nav-menu">
+        <a href="/static/dashboard.html" class="menu-item"><i class="fa-solid fa-chart-pie"></i> Inicio</a>
+        <a href="/static/sistema/donantes.html" class="menu-item"><i class="fa-solid fa-users"></i> Donantes</a>
+        <a href="/static/sistema/donaciones.html" class="menu-item active"><i class="fa-solid fa-syringe"></i> Donaciones</a>
+        <a href="/static/sistema/inventario.html" class="menu-item"><i class="fa-solid fa-droplet"></i> Inventario</a>
+    </nav>
+    <button id="btnLogout" class="logout-btn"><i class="fa-solid fa-power-off"></i> Cerrar Sesión</button>
+</aside>
+
+<main class="main-content">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div>
+            <h2 class="page-title">Extracciones de Sangre</h2>
+            <p class="page-subtitle">Registra nuevas donaciones y consulta el historial completo.</p>
+        </div>
+        <button id="btnExportarPDF" class="btn btn-outline">
+            <i class="fa-solid fa-file-pdf"></i> Exportar Historial PDF
+        </button>
+    </div>
+
+    <div class="form-panel" style="max-width: 800px; margin-bottom: 40px;">
+        <h3>Registrar Nueva Extracción</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">Asegúrate de que el donante ya esté registrado y haya firmado el consentimiento.</p>
+        
+        <form id="donacionForm">
+    <div class="form-row">
+        <div class="form-group">
+            <label>Documento del Donante</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="donacionDocumento" placeholder="Ej: 1001234567" required>
+                <button type="button" id="btnBuscarDonante" class="btn btn-outline" style="padding: 0 15px;">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+            <p id="donanteConfirmacion" style="margin-top: 5px; font-size: 0.85rem; font-weight: bold; color: var(--text-muted);"></p>
+        </div>
+
+        <div class="form-group">
+            <label>Cantidad Extraída (ML)</label>
+            <input type="number" id="donacionCantidad" min="200" placeholder="Ej: 450" required>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Observaciones Médicas (Opcional)</label>
+        <input type="text" id="donacionObs" maxlength="250" placeholder="Signos vitales estables, paciente tolera bien el procedimiento...">
+    </div>
+    <button type="submit" class="btn btn-primary w-full" id="btnGuardarDonacion" disabled>
+        <i class="fa-solid fa-plus"></i> Enviar al Banco de Sangre
+    </button>
+    <p id="donacionMsg" class="form-msg"></p>
+</form>
+    </div>
+
+    <h3>Historial de Donaciones</h3>
+    <div class="data-table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Donante</th>
+                    <th>Cantidad</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody id="tablaDonacionesBody">
+                </tbody>
+        </table>
+    </div>
+</main>
+<script src="/static/js/app.js"></script>
+</body>
+</html>
